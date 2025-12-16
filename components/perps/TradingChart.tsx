@@ -873,22 +873,50 @@ export default function TradingChart({
                     background: "#0b0b0e",
                     fontSize: "9px",
                     color: "#5c5c6b",
+                    position: "relative",
                 }}>
-                    {/* Generate date labels based on candle count */}
+                    {/* Generate date labels based on candle count and timeframe */}
                     {(() => {
                         const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
                         const now = new Date();
                         const labels: { text: string; position: number }[] = [];
                         const labelCount = Math.min(8, candles.length);
 
+                        // Calculate time offset per candle based on timeframe
+                        const getTimeOffsetMs = (tf: string): number => {
+                            switch (tf) {
+                                case "1m": return 60 * 1000;
+                                case "5m": return 5 * 60 * 1000;
+                                case "15m": return 15 * 60 * 1000;
+                                case "1h": return 60 * 60 * 1000;
+                                case "4h": return 4 * 60 * 60 * 1000;
+                                case "1D": return 24 * 60 * 60 * 1000;
+                                case "1W": return 7 * 24 * 60 * 60 * 1000;
+                                default: return 60 * 60 * 1000;
+                            }
+                        };
+
+                        const offsetMs = getTimeOffsetMs(timeframe);
+                        const showTime = ["1m", "5m", "15m", "1h"].includes(timeframe);
+
                         for (let i = 0; i < labelCount; i++) {
                             const candleIndex = Math.floor((i / (labelCount - 1)) * (candles.length - 1));
-                            const daysBack = candles.length - candleIndex;
-                            const date = new Date(now.getTime() - daysBack * 24 * 60 * 60 * 1000);
-                            const text = date.getDate() === 1 || i === 0
-                                ? months[date.getMonth()]
-                                : date.getDate().toString();
-                            labels.push({ text, position: (candleIndex / candles.length) * 100 });
+                            const candlesBack = candles.length - candleIndex;
+                            const date = new Date(now.getTime() - candlesBack * offsetMs);
+
+                            let text: string;
+                            if (showTime) {
+                                // Show time for shorter timeframes
+                                const hours = date.getHours().toString().padStart(2, '0');
+                                const mins = date.getMinutes().toString().padStart(2, '0');
+                                text = `${hours}:${mins}`;
+                            } else {
+                                // Show date for longer timeframes
+                                text = date.getDate() === 1 || i === 0
+                                    ? months[date.getMonth()]
+                                    : date.getDate().toString();
+                            }
+                            labels.push({ text, position: 2 + (candleIndex / candles.length) * 92 });
                         }
 
                         return labels.map((label, i) => (

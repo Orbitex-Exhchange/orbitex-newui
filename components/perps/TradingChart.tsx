@@ -482,8 +482,11 @@ export default function TradingChart({
                         {/* Candles or Line/Area */}
                         {chartType === "candle" ? (
                             candles.map((candle, i) => {
-                                const width = 96 / candles.length;
-                                const x = i * width + width / 2;
+                                // Improved spacing: 80% for candle area, leaving gaps between
+                                const candleAreaWidth = 92;
+                                const width = candleAreaWidth / candles.length;
+                                const x = 2 + i * width + width / 2;
+                                const bodyWidth = Math.max(width * 0.65, 0.5); // Wider body
 
                                 const openY = priceToY(candle.open);
                                 const closeY = priceToY(candle.close);
@@ -494,21 +497,25 @@ export default function TradingChart({
 
                                 return (
                                     <g key={i} style={{ filter: isHovered ? "url(#glow)" : "none" }}>
+                                        {/* Wick/Shadow */}
                                         <line
                                             x1={`${x}%`}
                                             y1={`${highY}%`}
                                             x2={`${x}%`}
                                             y2={`${lowY}%`}
                                             stroke={color}
-                                            strokeWidth={isHovered ? "2" : "1"}
+                                            strokeWidth={isHovered ? "1.5" : "1"}
+                                            opacity={0.9}
                                         />
+                                        {/* Body */}
                                         <rect
-                                            x={`${x - width * 0.35}%`}
+                                            x={`${x - bodyWidth / 2}%`}
                                             y={`${Math.min(openY, closeY)}%`}
-                                            width={`${width * 0.7}%`}
-                                            height={`${Math.max(Math.abs(openY - closeY), 0.3)}%`}
+                                            width={`${bodyWidth}%`}
+                                            height={`${Math.max(Math.abs(openY - closeY), 0.4)}%`}
                                             fill={color}
-                                            opacity={isHovered ? 1 : 0.9}
+                                            opacity={isHovered ? 1 : 0.95}
+                                            rx="1"
                                         />
                                     </g>
                                 );

@@ -1,438 +1,278 @@
 "use client";
 
-import { useState } from "react";
+import Link from "next/link";
 import { motion } from "framer-motion";
 
-// Mock trading data
-const tradingPairs = [
-    { pair: "ETH/USD", price: 3325.60, change24h: 0.09, volume: "32.6B", high: 3380, low: 3290 },
-    { pair: "BTC/USD", price: 92035, change24h: -0.74, volume: "51.9B", high: 93500, low: 91200 },
-    { pair: "SOL/USD", price: 136.30, change24h: -1.30, volume: "4.5B", high: 142, low: 134 },
+// Featured markets for the landing page
+const featuredMarkets = [
+    { symbol: "ETH-USD", name: "Ethereum", price: 3325.60, change24h: 0.09, volume: "32.6B", iconColor: "#627EEA", icon: "Ξ" },
+    { symbol: "BTC-USD", name: "Bitcoin", price: 92035, change24h: -0.74, volume: "51.9B", iconColor: "#F7931A", icon: "₿" },
+    { symbol: "SOL-USD", name: "Solana", price: 136.30, change24h: -1.30, volume: "4.5B", iconColor: "#14F195", icon: "◎" },
+    { symbol: "ARB-USD", name: "Arbitrum", price: 1.42, change24h: 2.15, volume: "890M", iconColor: "#28A0F0", icon: "A" },
+    { symbol: "OP-USD", name: "Optimism", price: 2.18, change24h: 1.85, volume: "540M", iconColor: "#FF0420", icon: "O" },
+    { symbol: "AVAX-USD", name: "Avalanche", price: 38.50, change24h: -0.45, volume: "1.2B", iconColor: "#E84142", icon: "A" },
 ];
 
-const orderBook = {
-    asks: [
-        { price: 3328.50, size: 12.5, total: 41606.25 },
-        { price: 3327.80, size: 8.2, total: 27287.96 },
-        { price: 3327.20, size: 15.7, total: 52237.04 },
-        { price: 3326.50, size: 4.1, total: 13638.65 },
-        { price: 3326.00, size: 22.3, total: 74169.80 },
-    ],
-    bids: [
-        { price: 3325.60, size: 18.4, total: 61191.04 },
-        { price: 3325.00, size: 9.6, total: 31920.00 },
-        { price: 3324.50, size: 14.2, total: 47207.90 },
-        { price: 3324.00, size: 7.8, total: 25927.20 },
-        { price: 3323.50, size: 25.1, total: 83423.85 },
-    ],
-};
-
-const recentTrades = [
-    { price: 3325.60, size: 2.4, side: "buy", time: "14:32:15" },
-    { price: 3325.40, size: 1.1, side: "sell", time: "14:32:12" },
-    { price: 3325.60, size: 0.8, side: "buy", time: "14:32:08" },
-    { price: 3325.50, size: 3.2, side: "buy", time: "14:32:05" },
-    { price: 3325.30, size: 1.5, side: "sell", time: "14:32:01" },
+const stats = [
+    { label: "24h Volume", value: "$156.2B" },
+    { label: "Open Interest", value: "$48.3B" },
+    { label: "Total Traders", value: "125,847" },
+    { label: "Markets", value: "42" },
 ];
 
-function PriceChart() {
+export default function PerpsLandingPage() {
     return (
         <div style={{
-            height: "280px",
-            background: "#1A1A1A",
-            borderRadius: "16px",
-            border: "1px solid #333333",
-            position: "relative",
-            overflow: "hidden",
+            minHeight: "100vh",
+            background: "#0a0a0a",
+            color: "#fff",
         }}>
-            {/* Fake chart SVG */}
-            <svg width="100%" height="100%" preserveAspectRatio="none" style={{ position: "absolute" }}>
-                <defs>
-                    <linearGradient id="chartGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                        <stop offset="0%" stopColor="rgb(249, 115, 22)" stopOpacity="0.3" />
-                        <stop offset="100%" stopColor="rgb(249, 115, 22)" stopOpacity="0" />
-                    </linearGradient>
-                </defs>
-                <path
-                    d="M0,200 Q80,180 160,185 T320,160 T480,170 T640,140 T800,150 L800,280 L0,280 Z"
-                    fill="url(#chartGradient)"
-                />
-                <path
-                    d="M0,200 Q80,180 160,185 T320,160 T480,170 T640,140 T800,150"
-                    stroke="#F97316"
-                    strokeWidth="3"
-                    fill="none"
-                />
-            </svg>
-
-            {/* Chart overlay info */}
-            <div style={{ position: "absolute", top: "20px", left: "20px", zIndex: 10 }}>
-                <div style={{ fontSize: "28px", fontWeight: "bold", color: "#FFFFFF" }}>$3,325.60</div>
-                <div style={{ fontSize: "14px", color: "#22C55E" }}>▲ $3.00 (0.09%)</div>
-            </div>
-
-            {/* Time labels */}
-            <div style={{
-                position: "absolute",
-                bottom: "10px",
-                left: 0,
-                right: 0,
+            {/* Header */}
+            <header style={{
                 display: "flex",
+                alignItems: "center",
                 justifyContent: "space-between",
-                padding: "0 20px",
-                fontSize: "12px",
-                color: "#6B6B6B",
+                padding: "20px 40px",
+                borderBottom: "1px solid #1a1a1a",
             }}>
-                <span>00:00</span>
-                <span>06:00</span>
-                <span>12:00</span>
-                <span>18:00</span>
-                <span>24:00</span>
-            </div>
-        </div>
-    );
-}
+                <Link href="/dashboard" style={{ display: "flex", alignItems: "center", gap: "12px", textDecoration: "none" }}>
+                    <motion.div
+                        whileHover={{ rotate: 180 }}
+                        transition={{ duration: 0.4 }}
+                        style={{
+                            width: "40px",
+                            height: "40px",
+                            borderRadius: "10px",
+                            background: "linear-gradient(135deg, #F97316 0%, #EA580C 100%)",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            boxShadow: "0 6px 20px rgba(249, 115, 22, 0.35)",
+                        }}
+                    >
+                        <span style={{ color: "white", fontWeight: "bold", fontSize: "20px" }}>O</span>
+                    </motion.div>
+                    <span style={{ fontSize: "22px", fontWeight: "700", color: "#fff" }}>Orbitex Perps</span>
+                </Link>
 
-function OrderBookRow({ order, type }: { order: typeof orderBook.asks[0]; type: "ask" | "bid" }) {
-    const isBid = type === "bid";
-    const maxTotal = 80000;
-    const fillWidth = (order.total / maxTotal) * 100;
-
-    return (
-        <div style={{
-            position: "relative",
-            padding: "6px 10px",
-            fontSize: "13px",
-            display: "flex",
-            justifyContent: "space-between",
-            fontFamily: "monospace",
-        }}>
-            <div
-                style={{
-                    position: "absolute",
-                    top: 0,
-                    bottom: 0,
-                    right: 0,
-                    width: `${fillWidth}%`,
-                    background: isBid ? "rgba(34, 197, 94, 0.1)" : "rgba(239, 68, 68, 0.1)",
-                }}
-            />
-            <span style={{ position: "relative", zIndex: 10, color: isBid ? "#22C55E" : "#EF4444" }}>
-                {order.price.toFixed(2)}
-            </span>
-            <span style={{ position: "relative", zIndex: 10, color: "#A0A0A0" }}>{order.size.toFixed(2)}</span>
-            <span style={{ position: "relative", zIndex: 10, color: "#6B6B6B" }}>{order.total.toFixed(2)}</span>
-        </div>
-    );
-}
-
-export default function TradePage() {
-    const [selectedPair, setSelectedPair] = useState(tradingPairs[0]);
-    const [orderType, setOrderType] = useState<"market" | "limit">("limit");
-    const [side, setSide] = useState<"buy" | "sell">("buy");
-
-    return (
-        <div style={{ padding: "24px" }}>
-            {/* Header with pair selector */}
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "24px" }}>
-                <div style={{ display: "flex", gap: "10px" }}>
-                    {tradingPairs.map((pair) => (
-                        <button
-                            key={pair.pair}
-                            onClick={() => setSelectedPair(pair)}
-                            style={{
-                                padding: "10px 18px",
-                                borderRadius: "10px",
-                                fontSize: "14px",
-                                fontWeight: "600",
-                                border: "none",
-                                cursor: "pointer",
-                                background: selectedPair.pair === pair.pair ? "linear-gradient(135deg, #F97316 0%, #EA580C 100%)" : "#1A1A1A",
-                                color: selectedPair.pair === pair.pair ? "white" : "#A0A0A0",
-                                transition: "all 0.2s ease",
-                            }}
-                        >
-                            {pair.pair}
-                        </button>
-                    ))}
-                </div>
-
-                <div style={{ textAlign: "right" }}>
-                    <div style={{ fontSize: "24px", fontWeight: "bold", color: "#FFFFFF" }}>
-                        ${selectedPair.price.toLocaleString("en-US", { minimumFractionDigits: 2 })}
-                    </div>
-                    <div style={{ fontSize: "14px", color: selectedPair.change24h >= 0 ? "#22C55E" : "#EF4444" }}>
-                        {selectedPair.change24h >= 0 ? "▲" : "▼"} {Math.abs(selectedPair.change24h).toFixed(2)}%
-                    </div>
-                </div>
-            </div>
-
-            {/* Main trading grid */}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 340px", gap: "24px", marginBottom: "24px" }}>
-                {/* Chart */}
-                <div>
-                    <PriceChart />
-
-                    {/* Stats bar */}
-                    <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "12px", marginTop: "16px" }}>
-                        {[
-                            { label: "24h Volume", value: selectedPair.volume },
-                            { label: "24h High", value: `$${selectedPair.high.toLocaleString()}` },
-                            { label: "24h Low", value: `$${selectedPair.low.toLocaleString()}` },
-                            { label: "Funding", value: "0.0045%" },
-                        ].map((stat) => (
-                            <div key={stat.label} style={{
-                                padding: "14px",
-                                borderRadius: "10px",
-                                background: "#1A1A1A",
-                                border: "1px solid #333333",
-                            }}>
-                                <div style={{ fontSize: "12px", color: "#6B6B6B", marginBottom: "4px" }}>{stat.label}</div>
-                                <div style={{ fontSize: "16px", fontWeight: "600", color: "#FFFFFF" }}>{stat.value}</div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-
-                {/* Order form */}
-                <div style={{
-                    padding: "20px",
-                    borderRadius: "16px",
-                    background: "#1A1A1A",
-                    border: "1px solid #333333",
-                }}>
-                    {/* Buy/Sell toggle */}
-                    <div style={{ display: "flex", gap: "8px", marginBottom: "20px" }}>
-                        <button
-                            onClick={() => setSide("buy")}
-                            style={{
-                                flex: 1,
-                                padding: "14px",
-                                borderRadius: "10px",
-                                border: "none",
-                                fontWeight: "600",
-                                fontSize: "15px",
-                                cursor: "pointer",
-                                background: side === "buy" ? "#22C55E" : "#262626",
-                                color: side === "buy" ? "white" : "#A0A0A0",
-                                transition: "all 0.2s ease",
-                            }}
-                        >
-                            Buy
-                        </button>
-                        <button
-                            onClick={() => setSide("sell")}
-                            style={{
-                                flex: 1,
-                                padding: "14px",
-                                borderRadius: "10px",
-                                border: "none",
-                                fontWeight: "600",
-                                fontSize: "15px",
-                                cursor: "pointer",
-                                background: side === "sell" ? "#EF4444" : "#262626",
-                                color: side === "sell" ? "white" : "#A0A0A0",
-                                transition: "all 0.2s ease",
-                            }}
-                        >
-                            Sell
-                        </button>
-                    </div>
-
-                    {/* Order type */}
-                    <div style={{ display: "flex", gap: "8px", marginBottom: "20px" }}>
-                        {(["limit", "market"] as const).map((type) => (
-                            <button
-                                key={type}
-                                onClick={() => setOrderType(type)}
-                                style={{
-                                    flex: 1,
-                                    padding: "10px",
-                                    borderRadius: "8px",
-                                    border: "none",
-                                    fontSize: "13px",
-                                    cursor: "pointer",
-                                    textTransform: "capitalize",
-                                    background: orderType === type ? "#262626" : "transparent",
-                                    color: orderType === type ? "#FFFFFF" : "#6B6B6B",
-                                    transition: "all 0.2s ease",
-                                }}
-                            >
-                                {type}
-                            </button>
-                        ))}
-                    </div>
-
-                    {/* Price input */}
-                    {orderType === "limit" && (
-                        <div style={{ marginBottom: "16px" }}>
-                            <label style={{ display: "block", fontSize: "13px", color: "#6B6B6B", marginBottom: "8px" }}>Price</label>
-                            <div style={{ position: "relative" }}>
-                                <input
-                                    type="number"
-                                    defaultValue={selectedPair.price}
-                                    style={{
-                                        width: "100%",
-                                        padding: "14px",
-                                        paddingRight: "50px",
-                                        borderRadius: "10px",
-                                        border: "1px solid #333333",
-                                        background: "#262626",
-                                        color: "#FFFFFF",
-                                        fontSize: "15px",
-                                        fontFamily: "monospace",
-                                        outline: "none",
-                                    }}
-                                />
-                                <span style={{ position: "absolute", right: "14px", top: "50%", transform: "translateY(-50%)", color: "#6B6B6B", fontSize: "13px" }}>USD</span>
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Amount input */}
-                    <div style={{ marginBottom: "20px" }}>
-                        <label style={{ display: "block", fontSize: "13px", color: "#6B6B6B", marginBottom: "8px" }}>Amount</label>
-                        <div style={{ position: "relative" }}>
-                            <input
-                                type="number"
-                                placeholder="0.00"
-                                style={{
-                                    width: "100%",
-                                    padding: "14px",
-                                    paddingRight: "60px",
-                                    borderRadius: "10px",
-                                    border: "1px solid #333333",
-                                    background: "#262626",
-                                    color: "#FFFFFF",
-                                    fontSize: "15px",
-                                    fontFamily: "monospace",
-                                    outline: "none",
-                                }}
-                            />
-                            <span style={{ position: "absolute", right: "14px", top: "50%", transform: "translateY(-50%)", color: "#6B6B6B", fontSize: "13px" }}>
-                                {selectedPair.pair.split("/")[0]}
-                            </span>
-                        </div>
-
-                        {/* Quick amount buttons */}
-                        <div style={{ display: "flex", gap: "8px", marginTop: "10px" }}>
-                            {["25%", "50%", "75%", "100%"].map((pct) => (
-                                <button
-                                    key={pct}
-                                    style={{
-                                        flex: 1,
-                                        padding: "8px",
-                                        borderRadius: "6px",
-                                        border: "none",
-                                        background: "#262626",
-                                        color: "#6B6B6B",
-                                        fontSize: "12px",
-                                        cursor: "pointer",
-                                    }}
-                                >
-                                    {pct}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Submit button */}
+                <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+                    <Link href="/dashboard" style={{ color: "#a0a0a0", textDecoration: "none", fontSize: "14px" }}>
+                        ← Back to Dashboard
+                    </Link>
                     <motion.button
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                         style={{
-                            width: "100%",
-                            padding: "16px",
-                            borderRadius: "12px",
+                            padding: "10px 20px",
+                            borderRadius: "10px",
                             border: "none",
-                            fontWeight: "600",
-                            fontSize: "16px",
-                            cursor: "pointer",
-                            background: side === "buy" ? "#22C55E" : "#EF4444",
+                            background: "linear-gradient(135deg, #F97316 0%, #EA580C 100%)",
                             color: "white",
-                            boxShadow: side === "buy" ? "0 8px 24px rgba(34, 197, 94, 0.25)" : "0 8px 24px rgba(239, 68, 68, 0.25)",
+                            fontWeight: "600",
+                            fontSize: "14px",
+                            cursor: "pointer",
+                            boxShadow: "0 4px 16px rgba(249, 115, 22, 0.3)",
                         }}
                     >
-                        {side === "buy" ? "Buy" : "Sell"} {selectedPair.pair.split("/")[0]}
+                        Connect Wallet
                     </motion.button>
                 </div>
-            </div>
+            </header>
 
-            {/* Order book and trades */}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "24px" }}>
-                {/* Order book */}
+            {/* Hero Section */}
+            <section style={{
+                padding: "80px 40px",
+                textAlign: "center",
+                position: "relative",
+                overflow: "hidden",
+            }}>
+                {/* Background Gradient */}
                 <div style={{
-                    padding: "20px",
-                    borderRadius: "16px",
-                    background: "#1A1A1A",
-                    border: "1px solid #333333",
-                }}>
-                    <h3 style={{ fontWeight: "600", color: "#FFFFFF", marginBottom: "16px" }}>Order Book</h3>
+                    position: "absolute",
+                    top: "50%",
+                    left: "50%",
+                    transform: "translate(-50%, -50%)",
+                    width: "800px",
+                    height: "800px",
+                    background: "radial-gradient(circle, rgba(249,115,22,0.1) 0%, transparent 70%)",
+                    pointerEvents: "none",
+                }} />
 
-                    <div style={{ display: "flex", justifyContent: "space-between", fontSize: "12px", color: "#6B6B6B", marginBottom: "10px", padding: "0 10px" }}>
-                        <span>Price (USD)</span>
-                        <span>Size</span>
-                        <span>Total</span>
-                    </div>
-
-                    <div style={{ marginBottom: "12px" }}>
-                        {orderBook.asks.slice().reverse().map((ask, i) => (
-                            <OrderBookRow key={i} order={ask} type="ask" />
-                        ))}
-                    </div>
-
-                    <div style={{
-                        padding: "10px",
-                        background: "#262626",
-                        borderRadius: "8px",
-                        textAlign: "center",
-                        fontWeight: "bold",
-                        fontSize: "18px",
-                        color: "#FFFFFF",
-                        marginBottom: "12px",
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                >
+                    <h1 style={{
+                        fontSize: "56px",
+                        fontWeight: "800",
+                        marginBottom: "20px",
+                        background: "linear-gradient(135deg, #fff 0%, #a0a0a0 100%)",
+                        WebkitBackgroundClip: "text",
+                        WebkitTextFillColor: "transparent",
                     }}>
-                        ${selectedPair.price.toFixed(2)}
-                    </div>
+                        Trade Perpetuals
+                    </h1>
+                    <p style={{
+                        fontSize: "20px",
+                        color: "#6b6b6b",
+                        maxWidth: "600px",
+                        margin: "0 auto 40px",
+                        lineHeight: 1.5,
+                    }}>
+                        Up to 100x leverage on crypto perpetual futures with deep liquidity and low fees
+                    </p>
 
-                    <div>
-                        {orderBook.bids.map((bid, i) => (
-                            <OrderBookRow key={i} order={bid} type="bid" />
+                    {/* Quick Stats */}
+                    <div style={{
+                        display: "flex",
+                        justifyContent: "center",
+                        gap: "40px",
+                        marginBottom: "60px",
+                    }}>
+                        {stats.map((stat) => (
+                            <div key={stat.label}>
+                                <div style={{ fontSize: "28px", fontWeight: "700", color: "#fff" }}>{stat.value}</div>
+                                <div style={{ fontSize: "13px", color: "#6b6b6b" }}>{stat.label}</div>
+                            </div>
                         ))}
                     </div>
+                </motion.div>
+            </section>
+
+            {/* Markets Grid */}
+            <section style={{ padding: "0 40px 80px" }}>
+                <div style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    marginBottom: "24px",
+                }}>
+                    <h2 style={{ fontSize: "24px", fontWeight: "600" }}>Featured Markets</h2>
+                    <span style={{ color: "#6b6b6b", fontSize: "14px" }}>42 markets available</span>
                 </div>
 
-                {/* Recent trades */}
                 <div style={{
-                    padding: "20px",
-                    borderRadius: "16px",
-                    background: "#1A1A1A",
-                    border: "1px solid #333333",
+                    display: "grid",
+                    gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))",
+                    gap: "16px",
                 }}>
-                    <h3 style={{ fontWeight: "600", color: "#FFFFFF", marginBottom: "16px" }}>Recent Trades</h3>
+                    {featuredMarkets.map((market, i) => (
+                        <motion.div
+                            key={market.symbol}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: i * 0.1 }}
+                        >
+                            <Link
+                                href={`/dashboard/trade/${market.symbol}`}
+                                style={{ textDecoration: "none" }}
+                            >
+                                <div
+                                    style={{
+                                        padding: "24px",
+                                        borderRadius: "16px",
+                                        background: "#0d0d0d",
+                                        border: "1px solid #1a1a1a",
+                                        cursor: "pointer",
+                                        transition: "all 0.2s ease",
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        e.currentTarget.style.borderColor = "#F97316";
+                                        e.currentTarget.style.transform = "translateY(-2px)";
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        e.currentTarget.style.borderColor = "#1a1a1a";
+                                        e.currentTarget.style.transform = "translateY(0)";
+                                    }}
+                                >
+                                    <div style={{ display: "flex", alignItems: "center", gap: "14px", marginBottom: "16px" }}>
+                                        <div style={{
+                                            width: "44px",
+                                            height: "44px",
+                                            borderRadius: "50%",
+                                            background: market.iconColor,
+                                            display: "flex",
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                            fontSize: "20px",
+                                            color: "#fff",
+                                            fontWeight: "bold",
+                                        }}>
+                                            {market.icon}
+                                        </div>
+                                        <div>
+                                            <div style={{ fontSize: "18px", fontWeight: "600", color: "#fff" }}>{market.symbol}</div>
+                                            <div style={{ fontSize: "13px", color: "#6b6b6b" }}>{market.name}</div>
+                                        </div>
+                                    </div>
 
-                    <div style={{ display: "flex", justifyContent: "space-between", fontSize: "12px", color: "#6B6B6B", marginBottom: "10px", padding: "0 10px" }}>
-                        <span>Price (USD)</span>
-                        <span>Size</span>
-                        <span>Time</span>
-                    </div>
+                                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
+                                        <div>
+                                            <div style={{ fontSize: "24px", fontWeight: "700", color: "#fff", fontFamily: "monospace" }}>
+                                                ${market.price.toLocaleString()}
+                                            </div>
+                                            <div style={{
+                                                fontSize: "14px",
+                                                color: market.change24h >= 0 ? "#22c55e" : "#ef4444",
+                                            }}>
+                                                {market.change24h >= 0 ? "+" : ""}{market.change24h.toFixed(2)}%
+                                            </div>
+                                        </div>
+                                        <div style={{ textAlign: "right" }}>
+                                            <div style={{ fontSize: "12px", color: "#6b6b6b" }}>24h Volume</div>
+                                            <div style={{ fontSize: "14px", color: "#a0a0a0" }}>${market.volume}</div>
+                                        </div>
+                                    </div>
 
-                    {recentTrades.map((trade, i) => (
-                        <div key={i} style={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            padding: "8px 10px",
-                            fontSize: "13px",
-                            fontFamily: "monospace",
-                        }}>
-                            <span style={{ color: trade.side === "buy" ? "#22C55E" : "#EF4444" }}>
-                                {trade.price.toFixed(2)}
-                            </span>
-                            <span style={{ color: "#A0A0A0" }}>{trade.size.toFixed(2)}</span>
-                            <span style={{ color: "#6B6B6B" }}>{trade.time}</span>
+                                    {/* Trade Button */}
+                                    <motion.div
+                                        whileHover={{ scale: 1.02 }}
+                                        style={{
+                                            marginTop: "16px",
+                                            padding: "12px",
+                                            borderRadius: "10px",
+                                            background: "linear-gradient(135deg, #F97316 0%, #EA580C 100%)",
+                                            textAlign: "center",
+                                            fontWeight: "600",
+                                            fontSize: "14px",
+                                            color: "white",
+                                        }}
+                                    >
+                                        Trade {market.symbol.split("-")[0]}
+                                    </motion.div>
+                                </div>
+                            </Link>
+                        </motion.div>
+                    ))}
+                </div>
+            </section>
+
+            {/* Features Section */}
+            <section style={{
+                padding: "60px 40px",
+                borderTop: "1px solid #1a1a1a",
+            }}>
+                <div style={{
+                    display: "grid",
+                    gridTemplateColumns: "repeat(3, 1fr)",
+                    gap: "40px",
+                    maxWidth: "1200px",
+                    margin: "0 auto",
+                }}>
+                    {[
+                        { icon: "⚡", title: "Instant Execution", desc: "Sub-second trade execution with guaranteed price" },
+                        { icon: "🔒", title: "Non-Custodial", desc: "Trade directly from your wallet with full control" },
+                        { icon: "💧", title: "Deep Liquidity", desc: "Minimal slippage even for large positions" },
+                    ].map((feature) => (
+                        <div key={feature.title} style={{ textAlign: "center" }}>
+                            <div style={{ fontSize: "40px", marginBottom: "16px" }}>{feature.icon}</div>
+                            <h3 style={{ fontSize: "18px", fontWeight: "600", marginBottom: "8px" }}>{feature.title}</h3>
+                            <p style={{ fontSize: "14px", color: "#6b6b6b", lineHeight: 1.5 }}>{feature.desc}</p>
                         </div>
                     ))}
                 </div>
-            </div>
+            </section>
         </div>
     );
 }

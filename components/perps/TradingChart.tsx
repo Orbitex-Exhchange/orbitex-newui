@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useRef, useEffect } from "react";
+import { useState, useMemo, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface TradingChartProps {
@@ -166,7 +166,7 @@ export default function TradingChart({
         }
     };
 
-    const handleDragStart = (e: React.MouseEvent) => {
+    const _handleDragStart = (e: React.MouseEvent) => {
         setIsDragging(true);
         setDragOffset({
             x: e.clientX - quickOrderPos.x,
@@ -174,7 +174,7 @@ export default function TradingChart({
         });
     };
 
-    const handleDragMove = (e: React.MouseEvent) => {
+    const _handleDragMove = (e: React.MouseEvent) => {
         if (!isDragging) return;
         const container = e.currentTarget.getBoundingClientRect();
         const newX = Math.max(0, Math.min(container.width - 320, e.clientX - container.left - dragOffset.x));
@@ -182,7 +182,7 @@ export default function TradingChart({
         setQuickOrderPos({ x: newX, y: newY });
     };
 
-    const handleDragEnd = () => {
+    const _handleDragEnd = () => {
         setIsDragging(false);
     };
 

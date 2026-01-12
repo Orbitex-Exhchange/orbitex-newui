@@ -23,8 +23,8 @@ export default function AccountSection({
     const [fromAccount, setFromAccount] = useState<AccountType>("spot");
     const [toAccount, setToAccount] = useState<AccountType>("perpetual");
     const [amount, setAmount] = useState("");
-    const [selectedAsset, setSelectedAsset] = useState("USDT");
-    const [selectedNetwork, setSelectedNetwork] = useState("Ethereum");
+    const [selectedAsset, _setSelectedAsset] = useState("USDT");
+    const [selectedNetwork, _setSelectedNetwork] = useState("Ethereum");
 
     const handleAction = () => {
         console.log(`${activeModal}: ${amount} ${selectedAsset}`);

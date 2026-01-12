@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface OrderBookEntry {
@@ -51,7 +51,7 @@ const generateTrades = (basePrice: number): RecentTrade[] => {
 export default function OrderBookTradesPanel({
     currentPrice = 3325.60,
     onPriceClick,
-    onSizeClick,
+    onSizeClick: _onSizeClick,
 }: OrderBookTradesPanelProps) {
     const [activeTab, setActiveTab] = useState<"book" | "trades">("book");
     const [precision, setPrecision] = useState(2);

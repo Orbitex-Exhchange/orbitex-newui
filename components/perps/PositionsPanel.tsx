@@ -101,7 +101,7 @@ export default function PositionsPanel() {
         setOrders([]);
     };
 
-    const currentPosition = positions.find(p => p.id === showTPSLModal);
+    const _currentPosition = positions.find(p => p.id === showTPSLModal);
     const closingPosition = positions.find(p => p.id === showCloseModal);
 
     return (

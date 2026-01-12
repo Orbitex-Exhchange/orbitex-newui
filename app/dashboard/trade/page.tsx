@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { motion, useMotionValue, useTransform, animate, useSpring } from "framer-motion";
-import { useEffect, useState, useRef, useCallback } from "react";
+import { motion, useMotionValue, animate, useSpring } from "framer-motion";
+import { useEffect, useState, useRef } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Navigation, Pagination } from "swiper/modules";
 import "swiper/css";
@@ -138,7 +138,7 @@ function ParticleCanvas() {
 
 // Mouse Follower Orbs - Smooth following elements
 function MouseFollowerOrbs() {
-    const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+    const [_mousePos, setMousePos] = useState({ x: 0, y: 0 });
     const springConfig = { damping: 25, stiffness: 150 };
     const x1 = useSpring(0, springConfig);
     const y1 = useSpring(0, springConfig);
